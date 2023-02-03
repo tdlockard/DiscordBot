@@ -29,6 +29,7 @@ API_KEY = ''
 STATUS_CHANGE_FREQUENCY = 240  # (In seconds) The delay between updating activities
 INTERRUPT_CHANCE = 400  # The odds that the bot will respond while you're typing
 RESPONSE_CHANCE = 100  # The odds that the bot will randomly respond to a message
+DOGPILE_CHANCE = 5  # The odds that the bot will attempt to react to a reaction
 REACTION_CHANCE = 10  # The odds that the bot will attempt to react to a message
 REACTION_LIMIT = 3  # The cap on how many reactions the bot can add to a message
 
@@ -41,6 +42,7 @@ class MyClient(discord.Client):
         print("STATUS_CHANGE_FREQUENCY: %s seconds" % STATUS_CHANGE_FREQUENCY)
         print("INTERRUPT_CHANCE: 1/%s odds" % INTERRUPT_CHANCE)
         print("RESPONSE_CHANCE: 1/%s odds" % RESPONSE_CHANCE)
+        print("DOGPILE_CHANCE: 1/%s odds" % DOGPILE_CHANCE)
         print("REACTION_CHANCE: 1/%s odds" % REACTION_CHANCE)
         print("REACTION_LIMIT: %s" % REACTION_LIMIT)
         print('------------------------------------')
@@ -85,7 +87,7 @@ class MyClient(discord.Client):
                 return
 
         # React
-        if random.randint(0, 2) == 1:
+        if random.randint(0, DOGPILE_CHANCE) == 1:
             await self.react(reaction.message)
 
     async def on_message(self, message):
