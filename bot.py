@@ -60,6 +60,7 @@ class MyClient(discord.Client):
         """
         Interject someone's message with some rude garbage
         """
+        print('------------------------------------')
         print("%s's typing in %s..." % (user, channel))
 
         if random.randint(0, INTERRUPT_CHANCE) == 1:
@@ -69,42 +70,64 @@ class MyClient(discord.Client):
             ]
             await channel.send(random.choice(responses))
 
-    async def on_reaction_add(self, reaction, user):
+        print('------------------------------------')
+
+    async def on_raw_reaction_add(self, payload):
         """
         Dogpile some extra reactions when someone else reacts to a message
+        Similar to "on_reaction_add" but this also catches messages that aren't
+        part of the messaging cache, as well as direct messages with the bot.
         """
-        print("%s reacted to a message with %s" % (user, reaction))
+        print('------------------------------------')
+        user = await self.fetch_user(payload.user_id)
+        print("%s reacted to a message with %s" % (user, payload.emoji.name))
+
+        channel = self.get_channel(payload.channel_id)
+        if not channel:
+            print('This must be part of a Direct Message, skipping...')
+            print('------------------------------------')
+            return
 
         # Pardon me
         if user == self.user:
             print("That's me reacting, skipping...")
+            print('------------------------------------')
             return
 
         # Only add reactions once
-        for reaction in reaction.message.reactions:
+        message = await channel.fetch_message(payload.message_id)
+        for reaction in message.reactions:
             if reaction.me == True:
                 print("I've already reacted to that message, skipping...")
+                print('------------------------------------')
                 return
 
         # React
         if random.randint(0, DOGPILE_CHANCE) == 1:
-            await self.react(reaction.message)
+            await self.react(message)
+        else:
+            print("I decided to not react to their reactions")
+
+        print('------------------------------------')
 
     async def on_message(self, message):
         """
         Respond to select messaging
         """
-        print("Received a message:\n%s\n%s\n" % (message, message.content))
+        print('------------------------------------')
+        print('Received a message:')
+        print('%s\n' % message)
+        print('"%s"\n' % message.content)
 
         # Ignore my own messages
         if message.author == self.user:
             print("That's my own message...")
+            print('------------------------------------')
             return
 
         # Reply to very specific messages with very specific "canned" responses
         if message.content.lower().startswith('i have a question'):
             await self.say(message, "How dare you")
-            return
 
         elif message.content.lower().startswith('leeroy'):
             await self.say(message, "JENKINS!!!")
@@ -179,6 +202,8 @@ class MyClient(discord.Client):
         if random.randint(0, REACTION_CHANCE) == 1:
             await self.react(message)
 
+        print('------------------------------------')
+
     async def my_background_task(self):
         """
         Periodically update the "game" that the bot is playing
@@ -188,7 +213,7 @@ class MyClient(discord.Client):
             await asyncio.sleep(STATUS_CHANGE_FREQUENCY)
             games = [
                 "Wow.", "Imgur", "Reddit", "Tic Toc", "Casually", "Nord VPN",
-                "Minecraft", "COD of Duty", "Destiny Also", "Gatcha Games",
+                "Minecraft", "COD of Duty", "Destiny Too", "Gatcha Games",
                 "Raid Shadowlegends", "My Brains Out Right Now",
                 "Call of Duty 2 Two 17.5 HD Remix Electric Boogaloo",
             ]
@@ -252,7 +277,7 @@ class MyClient(discord.Client):
 
                     # Report any matching emoji
                     if len(matches) > match_count:
-                        print("\tAdding %s %s from key word %s" % (
+                        print('\tAdding %s %s from key word "%s"' % (
                                 emoji.emojize(character),
                                 character,
                                 word,
@@ -316,10 +341,11 @@ def main():
         print(msg)
         return
 
-    # Specify the ability to read message text content.
+    # Specify the ability to read message text content and reactions.
     # May not be necessary now, after the recent change to Discord bots.
     intents = discord.Intents.default()
     intents.messages = True
+    intents.reactions = True
 
     # Finally, run the bot!
     client = MyClient(intents=intents)
