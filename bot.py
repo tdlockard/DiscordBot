@@ -115,9 +115,8 @@ class MyClient(discord.Client):
         Respond to select messaging
         """
         print('------------------------------------')
-        print('Received a message:')
-        print('%s\n' % message)
-        print('"%s"\n' % message.content)
+        print('New message from %s in #%s:' % (message.author, message.channel))
+        print('"%s"' % message.content)
 
         # Ignore my own messages
         if message.author == self.user:
@@ -225,7 +224,7 @@ class MyClient(discord.Client):
         Simulate a natural emoji reaction based on the message contents
         self.emojis  # This server's current emojis
         """
-        print("Applying some Emoji reactions...")
+        print("Seeing what Emoji reactions I could apply...")
 
         stop_words = [
             'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you',
@@ -341,7 +340,7 @@ def main():
         print(msg)
         return
 
-    # Specify the ability to read message text content and reactions.
+    # Specify the ability to read message's text content and reactions.
     # May not be necessary now, after the recent change to Discord bots.
     intents = discord.Intents.default()
     intents.messages = True
