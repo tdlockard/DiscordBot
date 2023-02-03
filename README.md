@@ -36,7 +36,7 @@ You can add the api key to the **"api_key.yaml"** file or you can set it within 
 
 2. Create a virtual environment for Python 3
 
-        python3 -m venv env
+        virtualenv -p python3 venv
 
     1. Initialize our new virtual env
         

@@ -161,3 +161,6 @@ cython_debug/
 
 # VS Code
 .vscode
+
+# Ignore future changes to our api key
+api_key.yaml
