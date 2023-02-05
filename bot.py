@@ -78,19 +78,18 @@ class MyClient(discord.Client):
         Similar to "on_reaction_add" but this also catches messages that aren't
         part of the messaging cache, as well as direct messages with the bot.
         """
-        print('------------------------------------')
         user = await self.fetch_user(payload.user_id)
+
+        # That's me reacting, skipping...
+        if user == self.user:
+            return
+
+        print('------------------------------------')
         print("%s reacted to a message with %s" % (user, payload.emoji.name))
 
         channel = self.get_channel(payload.channel_id)
         if not channel:
             print('This must be part of a Direct Message, skipping...')
-            print('------------------------------------')
-            return
-
-        # Pardon me
-        if user == self.user:
-            print("That's me reacting, skipping...")
             print('------------------------------------')
             return
 
@@ -104,6 +103,7 @@ class MyClient(discord.Client):
 
         # React
         if random.randint(0, DOGPILE_CHANCE) == 1:
+            print('"%s"' % message.content)
             await self.react(message)
         else:
             print("I decided to not react to their reactions")
@@ -247,7 +247,7 @@ class MyClient(discord.Client):
             'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren',
             "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn',
             "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven',
-            "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't",
+            "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'aight',
             'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'people',
             'shouldn', "shouldn't", 'wasn', "wasn't", 'way', 'weren', 'hold',
             "weren't", 'won', "won't", 'wouldn', "wouldn't", 'right', 'left',
